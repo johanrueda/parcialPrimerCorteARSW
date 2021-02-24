@@ -1,11 +1,18 @@
 package eci.arsw.covidanalyzer.service;
 
+import eci.arsw.covidanalyzer.Persistence.covidPersistence;
 import eci.arsw.covidanalyzer.model.Result;
 import eci.arsw.covidanalyzer.model.ResultType;
+import org.springframework.stereotype.Service;
 
+import java.util.Set;
 import java.util.UUID;
-
+@Service("ICovidAggregateServiceStub")
 public class ICovidAggregateServiceStub implements  ICovidAggregateService{
+
+
+
+
     /**
      * Add a new result into the specified result type storage.
      *
@@ -15,7 +22,8 @@ public class ICovidAggregateServiceStub implements  ICovidAggregateService{
      */
     @Override
     public boolean aggregateResult(Result result, ResultType type) {
-        return false;
+        new covidPersistence().saveResult(result,type);
+        return true;
     }
 
     /**
@@ -25,16 +33,17 @@ public class ICovidAggregateServiceStub implements  ICovidAggregateService{
      * @return
      */
     @Override
-    public boolean getResult(ResultType type) {
-        return false;
+    public Set<Result> getResult(ResultType type) {
+        return new covidPersistence().getResult(type);
     }
 
     /**
      * @param id
      * @param type
+     * @return
      */
     @Override
-    public void upsertPersonWithMultipleTests(UUID id, ResultType type) {
-
+    public boolean upsertPersonWithMultipleTests(UUID id, ResultType type) {
+        return new covidPersistence().personUpdate(id,type);
     }
 }
