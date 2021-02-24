@@ -20,26 +20,53 @@ public class CovidAnalyzerTool {
 
     private ResultAnalyzer resultAnalyzer;
     private TestReader testReader;
-    private int amountOfFilesTotal;
-    private AtomicInteger amountOfFilesProcessed;
+    private static int amountOfFilesTotal;
+    private static AtomicInteger amountOfFilesProcessed;
+    private int cantHilos=5;
+    private ThreadCovid[] threadCovids;
+    private List<File> covidFiles;
+    static CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
+    static boolean isPaused=false;
+
+
+
 
     public CovidAnalyzerTool() {
         resultAnalyzer = new ResultAnalyzer();
         testReader = new TestReader();
         amountOfFilesProcessed = new AtomicInteger();
+        amountOfFilesProcessed.set(0);
+        List<File> covidFiles = getResultFileList();
+        amountOfFilesTotal = covidFiles.size();
     }
 
     public void processResultData() {
-        amountOfFilesProcessed.set(0);
-        List<File> resultFiles = getResultFileList();
-        amountOfFilesTotal = resultFiles.size();
-        for (File resultFile : resultFiles) {
-            List<Result> results = testReader.readResultsFromFile(resultFile);
-            for (Result result : results) {
-                resultAnalyzer.addResult(result);
-            }
-            amountOfFilesProcessed.incrementAndGet();
+        threadCovids = new ThreadCovid[cantHilos];
+        for(int i=0;i < cantHilos;i++){
+            threadCovids[i] = new ThreadCovid(testReader,resultAnalyzer,this);
         }
+        int llevo =0;
+        for(File files: covidFiles){
+            threadCovids[llevo].addFile(files);
+            if (llevo == cantHilos - 1) {
+                llevo = 0;
+            } else {
+                llevo++;
+            }
+        }
+        for (ThreadCovid hilos: threadCovids){
+            hilos.start();
+        }
+        for(ThreadCovid hilos : threadCovids){
+            try {
+                hilos.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        System.out.println("Programa Finalizado");
+        showReport();
+        System.out(0);
     }
 
     private List<File> getResultFileList() {
@@ -61,20 +88,35 @@ public class CovidAnalyzerTool {
      * A main() so we can easily run these routing rules in our IDE
      */
     public static void main(String... args) throws Exception {
-        CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
         Thread processingThread = new Thread(() -> covidAnalyzerTool.processResultData());
         processingThread.start();
-        while (true) {
+        while (amountOfFilesProcessed.get() < amountOfFilesTotal) {
             Scanner scanner = new Scanner(System.in);
             String line = scanner.nextLine();
-            if (line.contains("exit"))
+            if (line.contains("exit")) {
                 break;
-            String message = "Processed %d out of %d files.\nFound %d positive people:\n%s";
-            Set<Result> positivePeople = covidAnalyzerTool.getPositivePeople();
-            String affectedPeople = positivePeople.stream().map(Result::toString).reduce("", (s1, s2) -> s1 + "\n" + s2);
-            message = String.format(message, covidAnalyzerTool.amountOfFilesProcessed.get(), covidAnalyzerTool.amountOfFilesTotal, positivePeople.size(), affectedPeople);
-            System.out.println(message);
+            } else if (line.equals("") && !isPaused) {
+                System.out.println("Programa Pausado");
+                isPaused=true;
+            }
         }
+    }
+
+    private static void showReport(){
+        String message = "Processed %d out of %d files.\nFound %d positive people:\n%s";
+        Set<Result> positivePeople = covidAnalyzerTool.getPositivePeople();
+        String affectedPeople = positivePeople.stream().map(Result::toString).reduce("", (s1, s2) -> s1 + "\n" + s2);
+        message = String.format(message, covidAnalyzerTool.amountOfFilesProcessed.get(), covidAnalyzerTool.amountOfFilesTotal, positivePeople.size(), affectedPeople);
+        System.out.println(message);
+    }
+
+    private ThreadCovid[] getHilos () {
+        return threadCovids;
+    }
+
+
+    public void processArchive () {
+        amountOfFilesProcessed.incrementAndGet();
     }
 
 }
