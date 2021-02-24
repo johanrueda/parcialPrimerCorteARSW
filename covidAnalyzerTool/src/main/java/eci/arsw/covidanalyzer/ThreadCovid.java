@@ -25,8 +25,8 @@ public class ThreadCovid extends Thread{
     @Override
     public void run(){
         for(File archivo: listaCovid){
-            List<Result> transacciones = testReader.readResultsFromFile(archivo);
-            for(Result transaction: transacciones) {
+            List<Result> resultados = testReader.readResultsFromFile(archivo);
+            for(Result transaction: resultados) {
                 while (isPause) {
                     synchronized (mutex) {
                         try {

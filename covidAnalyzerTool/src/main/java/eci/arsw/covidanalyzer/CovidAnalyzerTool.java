@@ -25,7 +25,7 @@ public class CovidAnalyzerTool {
     private int cantHilos=5;
     private ThreadCovid[] threadCovids;
     private List<File> covidFiles;
-    static CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
+    private static CovidAnalyzerTool covidAnalyzerTool = new CovidAnalyzerTool();
     static boolean isPaused=false;
 
 
@@ -36,7 +36,7 @@ public class CovidAnalyzerTool {
         testReader = new TestReader();
         amountOfFilesProcessed = new AtomicInteger();
         amountOfFilesProcessed.set(0);
-        List<File> covidFiles = getResultFileList();
+        covidFiles = getResultFileList();
         amountOfFilesTotal = covidFiles.size();
     }
 
@@ -66,7 +66,7 @@ public class CovidAnalyzerTool {
         }
         System.out.println("Programa Finalizado");
         showReport();
-        System.out(0);
+        System.exit(0);
     }
 
     private List<File> getResultFileList() {
@@ -87,7 +87,7 @@ public class CovidAnalyzerTool {
     /**
      * A main() so we can easily run these routing rules in our IDE
      */
-    public static void main(String... args) throws Exception {
+    public static void main(String[] args) throws Exception {
         Thread processingThread = new Thread(() -> covidAnalyzerTool.processResultData());
         processingThread.start();
         while (amountOfFilesProcessed.get() < amountOfFilesTotal) {
@@ -98,8 +98,19 @@ public class CovidAnalyzerTool {
             } else if (line.equals("") && !isPaused) {
                 System.out.println("Programa Pausado");
                 isPaused=true;
+                for (ThreadCovid hilo: covidAnalyzerTool.getHilos()){
+                    hilo.pause();
+                }
+                showReport();
+            }else if(line.equals("") && isPaused){
+                isPaused=false;
+                System.out.println("Programa reanudado");
+                for (ThreadCovid hilo : covidAnalyzerTool.getHilos()){
+                    hilo.reanudar();
+                }
             }
         }
+        showReport();
     }
 
     private static void showReport(){
