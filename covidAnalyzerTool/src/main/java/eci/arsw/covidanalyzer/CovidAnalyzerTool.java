@@ -66,7 +66,6 @@ public class CovidAnalyzerTool {
         }
         System.out.println("Programa Finalizado");
         showReport();
-        System.exit(0);
     }
 
     private List<File> getResultFileList() {
