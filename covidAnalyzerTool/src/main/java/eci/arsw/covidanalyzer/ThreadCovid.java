@@ -35,9 +35,8 @@ public class ThreadCovid extends Thread{
                             e.printStackTrace();
                         }
                     }
-                    resultAnalyzer.addResult(transaction);
                 }
-
+                resultAnalyzer.addResult(transaction);
             }
             covid.processArchive();
         }
