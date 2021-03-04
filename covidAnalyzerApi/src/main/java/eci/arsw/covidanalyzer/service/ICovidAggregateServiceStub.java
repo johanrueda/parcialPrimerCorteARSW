@@ -17,6 +17,7 @@ public class ICovidAggregateServiceStub implements  ICovidAggregateService{
     private List<Result> List = new CopyOnWriteArrayList<>();
 
     public ICovidAggregateServiceStub(){
+
         List.add(new Result(UUID.randomUUID(),"Johan","Rueda","j.@gmail.com","2021-03-03T10:65:45Z",true,1.5,ResultType.TRUE_POSITIVE ));
         List.add(new Result(UUID.randomUUID(),"david","Rueda","j.@gmail.com","2021-03-03T10:65:45Z",false,1.5,ResultType.TRUE_NEGATIVE ));
         List.add(new Result(UUID.randomUUID(),"diego","Rueda","j.@gmail.com","2021-03-03T10:65:45Z",true,1.5,ResultType.FALSE_POSITIVE ));

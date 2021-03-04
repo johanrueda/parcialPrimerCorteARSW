@@ -1,0 +1,7 @@
+eci\arsw\covidanalyzer\model\Result.class
+eci\arsw\covidanalyzer\model\ResultType.class
+eci\arsw\covidanalyzer\CovidAggregateController.class
+eci\arsw\covidanalyzer\CovidAnalyzerAPIApplication.class
+eci\arsw\covidanalyzer\service\Excepcion.class
+eci\arsw\covidanalyzer\service\ICovidAggregateServiceStub.class
+eci\arsw\covidanalyzer\service\ICovidAggregateService.class
