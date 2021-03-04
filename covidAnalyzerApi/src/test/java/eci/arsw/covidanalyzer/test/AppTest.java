@@ -2,18 +2,13 @@ package eci.arsw.covidanalyzer.test;
 
 import com.google.gson.Gson;
 
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 import eci.arsw.covidanalyzer.CovidAggregateController;
 import eci.arsw.covidanalyzer.CovidAnalyzerAPIApplication;
-import eci.arsw.covidanalyzer.model.Result;
-import eci.arsw.covidanalyzer.model.ResultType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
